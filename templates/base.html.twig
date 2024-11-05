@@ -1,29 +1,71 @@
 <!DOCTYPE html>
-<html>
-	<head>
-		<meta charset="UTF-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1">
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-		<title>
-			{% block title %}EASYSTOCK
-			{% endblock %}
-		</title>
-		<link rel="shortcut icon" type="image/png" href="{{asset('assets/images/logos/favicon.png')}}"/>
+    <title>
+        {% block title %}EASY STOCK
+        {% endblock %}
+    </title>
+    <link rel="shortcut icon" type="image/png" href="{{ asset('assets/images/logos/favicon.png') }}"/>
 
-		<link rel="stylesheet" href="{{asset("assets/css/styles.min.css")}}"/> {% block stylesheets %}{% endblock %}{% block javascripts %}{% endblock %}
+    <link rel="stylesheet"
+          href="{{ asset("assets/css/styles.min.css") }}"/>
+    <link rel="stylesheet"
+          href="{{ asset("assets/plugins/slimselect.css") }}"/>
+    <link rel="stylesheet"
+          href="{{ asset("assets/plugins/toastr.min.css") }}"/>
+    <style>
+        .form-select {
+            background-image: none;
+        }
+    </style>
+    {% block stylesheets %}{% endblock %}
 
-		</head>
-		<body>
-			<div
-				class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full" data-sidebar-position="fixed" data-header-position="fixed">
-				<!-- Sidebar Start -->
-				{{ include("partials/sidebard.html.twig") }}
-				<!--  Sidebar End -->
-				<!--  Main wrapper -->
-				{{ include("partials/header.html.twig") }}{% block body %}
-			{% endblock %}
+</head>
+<body>
+<!--  Body Wrapper -->
+<div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
+     data-sidebar-position="fixed" data-header-position="fixed">
+    <!-- Sidebar Start -->
+    {{ include('/partials/sidebard.html.twig') }}
+    <!--  Sidebar End -->
+    <!--  Main wrapper -->
+    <div class="body-wrapper">
+        <!--  Header Start -->
+        {{ include('/partials/header.html.twig') }}
+        <!--  Header End -->
+        <div class="body-wrapper-inner">
+            {% block body %}{% endblock %}
+        </div>
+    </div>
+</div>
+<script src="{{ asset("/assets/libs/jquery/dist/jquery.min.js") }}"></script>
+<script src="{{ asset("/assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js") }}"></script>
+<script src="{{ asset("/assets/js/sidebarmenu.js") }}"></script>
+<script src="{{ asset("/assets/js/app.min.js") }}"></script>
+<script src="{{ asset("/assets/libs/apexcharts/dist/apexcharts.min.js") }}"></script>
+<script src="{{ asset("/assets/libs/simplebar/dist/simplebar.js") }}"></script>
+<script src="{{ asset("/assets/js/dashboard.js") }}"></script>
+<script src="{{ asset("/assets/plugins/slimselect.min.js") }}"></script>
+<script src="{{ asset("/assets/plugins/toastr.min.js") }}"></script>
+<!-- solar icons -->
+<script src="https://cdn.jsdelivr.net/npm/iconify-icon@1.0.8/dist/iconify-icon.min.js"></script>
+<script>
+    {% for label, messages in app.flashes(['success', 'warning']) %}
+        {% for message in messages %}
+            toastr.{{ label }}('{{ message }}');
+            toastr.options = {
+                "positionClass": "toast-top-right",
+                "timeOut": "5000",
+                "closeButton": true,
+                "progressBar": true,
+            };
+        {% endfor %}
+    {% endfor %}
 
-
-		</div>
-	</body>
-</html></div></body><script src="{{asset('/assets/libs/jquery/dist/jquery.min.js')}}"> </script><script src="{{asset("/assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js")}}"></script><script src="{{asset("/assets/js/sidebarmenu.js")}}"></script><script src="{{asset("/assets/js/app.min.js")}}"></script><script src="{{asset("/assets/libs/apexcharts/dist/apexcharts.min.js")}}"></script><script src="{{asset("/assets/libs/simplebar/dist/simplebar.js")}}"></script><script src="{{asset("/assets/js/dashboard.js")}}"></script></html>
+</script>
+{% block javascripts %}{% endblock %}
+</body>
+</html>

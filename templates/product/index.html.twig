@@ -1,0 +1,73 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="card-title fw-semibold mb-4">Liste des produits</h5>
+                    <a class="btn btn-primary" href="{{ path('app_product_new') }}"><i class="ti ti-plus"></i> Créer un
+                        produit</a>
+                </div>
+                <div class="table-responsive" data-simplebar>
+                    <table class="table text-nowrap align-middle table-custom mb-0">
+                        <thead>
+                        <tr>
+                            <th scope="col" class="text-dark fw-normal ps-0">Nom du produit
+                            </th>
+                            <th scope="col" class="text-dark fw-normal">Prix unitaire</th>
+                            <th scope="col" class="text-dark fw-normal">Status</th>
+                            <th scope="col" class="text-dark fw-normal">Quantité</th>
+                            <th scope="col" class="text-dark fw-normal">Catégorie</th>
+                            <th scope="col" class="text-dark fw-normal">Création</th>
+                            <th scope="col" class="text-dark fw-normal">Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for product in products %}
+                            <tr>
+                                <td class="ps-0">
+                                    <div class="d-flex align-items-center gap-6">
+                                        <img src="{{ asset("assets/images/products/dash-prd-1.jpg") }}" alt="prd1"
+                                             width="48"
+                                             class="rounded"/>
+                                        <div>
+                                            <h6 class="mb-0">{{ product.name }}</h6>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span>{{ product.unitPrice }} GNF</span>
+                                </td>
+                                <td>
+                                    {% include('product/_partials/_status_product.twig') %}
+                                </td>
+                                <td>
+                                    <span class="text-dark">{{ product.quantityStock }}</span>
+                                </td>
+                                <td>
+                                    <span class="badge bg-success-subtle text-info">{{ product.category.name }}</span>
+                                </td>
+                                <td>
+                                    <span class="text-dark">{{ product.createdAt | date('d/m/y') }}</span>
+                                </td>
+                                <td>
+                                    <a href="#" class="btn btn-light"> <i class="ti ti-eye"></i></a>
+                                    <a href="{{ path('app_product_edit', {'id' : product.id}) }}" class="btn btn-light"><i class="ti ti-edit"></i></a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    <div class="navigation mt-3 d-flex justify-content-end align-items-center">
+                        {{ knp_pagination_render(products) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+{% endblock %}

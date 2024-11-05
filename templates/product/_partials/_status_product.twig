@@ -1,0 +1,7 @@
+{% if product.quantityStock is not null and  product.quantityStock is defined %}
+    {% if product.quantityStock > 10 %}
+        <span class="badge bg-success-subtle text-success">Disponible</span>
+    {% elseif product.quantityStock < 10 %}
+        <span class="badge bg-danger-subtle text-danger">Fini</span>
+    {% endif %}
+{% endif %}

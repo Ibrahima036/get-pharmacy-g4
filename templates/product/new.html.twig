@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+
+{% block body %}
+    {{ include('product/_form.html.twig') }}
+{% endblock %}
+{% block javascripts %}
+    <script>
+        new SlimSelect({
+            select: '#product_category',
+        })
+        new SlimSelect({
+            select: '#product_supplier',
+        })
+    </script>
+{% endblock %}
