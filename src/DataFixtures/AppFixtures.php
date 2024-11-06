@@ -26,7 +26,7 @@ class AppFixtures extends Fixture
             $supplier->setFullname($faker->company)
             ->setAddress($faker->address)
             ->setPhone($faker->phoneNumber)
-            ->setEmail($faker->companyEmail)->setCreatedAt(new \DateTimeImmutable());
+           ->setCreatedAt(new \DateTimeImmutable());
             $manager->persist($supplier);
         }
 

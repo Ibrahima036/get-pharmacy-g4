@@ -10,6 +10,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\NotNull;
 
 class SupplierType extends AbstractType
 {
@@ -42,20 +43,11 @@ class SupplierType extends AbstractType
                 'label_attr' => ['class' => 'form-label'],
                 'required' => true,
                 'constraints' => [
-                    new NotBlank(['message' => ErrorMessage::MESSAGE_DEFAULT])
+                    new NotBlank(['message' => ErrorMessage::MESSAGE_DEFAULT]),
                 ],
 
             ])
-            ->add('email',EmailType::class, [
-                'label' => "L'email",
-                'attr' => ['class' => 'form-control'],
-                'label_attr' => ['class' => 'form-label'],
-                'required' => true,
-                'constraints' => [
-                    new NotBlank(['message' => ErrorMessage::MESSAGE_DEFAULT])
-                ],
 
-            ])
         ;
     }
 

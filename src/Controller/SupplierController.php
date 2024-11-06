@@ -37,6 +37,7 @@ final class SupplierController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->persist($supplier);
             $entityManager->flush();
+            $this->addFlash('success', 'Ajout du founisseur éffectué');
 
             return $this->redirectToRoute('app_supplier_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -63,7 +64,7 @@ final class SupplierController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
-
+            $this->addFlash('success', 'Modification du founisseur éffectué');
             return $this->redirectToRoute('app_supplier_index', [], Response::HTTP_SEE_OTHER);
         }
 
