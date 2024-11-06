@@ -1,0 +1,47 @@
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title fw-semibold mb-4">GESTION FOURNISSEUR</h5>
+            <div class="card">
+                {{ form_start(form, {'attr' : {'novalidate' : 'novalidate'}}) }}
+                <div class="card-body row">
+
+                    <div class="mb-3 col-sm-12 col-md-6">
+                        {{ form_label(form.fullname) }}
+                        {{ form_widget(form.fullname) }}
+                        <div class="text-danger">
+                            {{ form_errors(form.fullname) }}
+                        </div>
+                    </div>
+                    <div class="mb-3 col-sm-12 col-md-6">
+                        {{ form_label(form.email) }}
+                        {{ form_widget(form.email) }}
+                        <div class="text-danger">
+                            {{ form_errors(form.email) }}
+                        </div>
+                    </div>
+                    <div class="mb-3 col-sm-12 col-md-6">
+                        {{ form_label(form.address) }}
+                        {{ form_widget(form.address) }}
+                        <div class="text-danger">
+                            {{ form_errors(form.address) }}
+                        </div>
+                    </div>
+                    <div class="mb-3 col-sm-12 col-md-6">
+                        {{ form_label(form.phone) }}
+                        {{ form_widget(form.phone) }}
+                        <div class="text-danger">
+                            {{ form_errors(form.phone) }}
+                        </div>
+                    </div>
+                    <div class="col">
+                        <button type="submit" class="btn btn-primary mt-3">Enrégistrer</button>
+                    </div>
+
+                </div>
+                {{ form_end(form) }}
+            </div>
+
+        </div>
+    </div>
+</div>

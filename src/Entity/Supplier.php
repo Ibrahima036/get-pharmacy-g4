@@ -46,6 +46,7 @@ class Supplier
     {
         $this->orders = new ArrayCollection();
         $this->products = new ArrayCollection();
+        $this->createdAt = new \DateTimeImmutable();
     }
 
     public function getId(): ?int
