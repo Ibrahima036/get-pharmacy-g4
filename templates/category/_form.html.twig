@@ -1,0 +1,32 @@
+
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title fw-semibold mb-4">GESTION CATEGORIE</h5>
+            <div class="card">
+                <div class="card-body">
+                    {{ form_start(form, {'attr' : {'novalidate' : 'novalidate'}}) }}
+                    <div class="mb-3">
+                        {{ form_label(form.name) }}
+                        {{ form_widget(form.name) }}
+                        <div class="text-danger">
+                            {{ form_errors(form.name) }}
+                        </div>
+                    </div>
+                    <div>
+                        {{ form_label(form.description) }}
+                        {{ form_widget(form.description) }}
+                        <div class="text-danger">
+                            {{ form_errors(form.description) }}
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary mt-3">Enrégistrer</button>
+                    {{ form_end(form) }}
+                </div>
+
+
+            </div>
+
+        </div>
+    </div>
+</div>

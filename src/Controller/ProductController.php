@@ -21,7 +21,7 @@ final class ProductController extends AbstractController
         $pagination = $paginator->paginate(
             $productRepository->findBy([], ['createdAt' => 'DESC']),
             $request->query->getInt('page', 1),
-            5        );
+            10        );
 
         return $this->render('product/index.html.twig', [
             'products' => $pagination
