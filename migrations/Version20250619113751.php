@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20241105122423 extends AbstractMigration
+final class Version20250619113751 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -20,14 +20,12 @@ final class Version20241105122423 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('CREATE UNIQUE INDEX UNIQ_64C19C15E237E06 ON category (name)');
-        $this->addSql('CREATE UNIQUE INDEX UNIQ_D34A04AD5E237E06 ON product (name)');
+        $this->addSql('ALTER TABLE product CHANGE expiration_date expiration_date DATETIME DEFAULT NULL COMMENT \'(DC2Type:datetime_immutable)\'');
     }
 
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->addSql('DROP INDEX UNIQ_64C19C15E237E06 ON category');
-        $this->addSql('DROP INDEX UNIQ_D34A04AD5E237E06 ON product');
+        $this->addSql('ALTER TABLE product CHANGE expiration_date expiration_date VARCHAR(255) DEFAULT NULL');
     }
 }

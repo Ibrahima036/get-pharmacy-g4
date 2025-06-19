@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Enum\PharmaceuticalFormType;
 use App\Repository\ProductRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -27,8 +28,7 @@ class Product
     #[ORM\Column]
     private ?int $unitPrice = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $quantityStock = null;
+
 
     #[ORM\ManyToOne(inversedBy: 'products')]
     private ?Category $category = null;
@@ -38,6 +38,21 @@ class Product
 
     #[ORM\ManyToOne(inversedBy: 'products')]
     private ?Supplier $supplier = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $code = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $dosage = null;
+
+    #[ORM\Column( nullable: true)]
+    private ?\DateTimeImmutable $expirationDate = null;
+
+    #[ORM\Column(enumType: PharmaceuticalFormType::class)]
+    private ?PharmaceuticalFormType $form = null;
+
+    #[ORM\OneToOne(mappedBy: 'product', cascade: ['persist', 'remove'])]
+    private ?Stock $stock = null;
 
     public function getId(): ?int
     {
@@ -80,17 +95,7 @@ class Product
         return $this;
     }
 
-    public function getQuantityStock(): ?string
-    {
-        return $this->quantityStock;
-    }
 
-    public function setQuantityStock(string $quantityStock): static
-    {
-        $this->quantityStock = $quantityStock;
-
-        return $this;
-    }
 
     public function getCategory(): ?Category
     {
@@ -124,6 +129,76 @@ class Product
     public function setSupplier(?Supplier $supplier): static
     {
         $this->supplier = $supplier;
+
+        return $this;
+    }
+
+    public function getCode(): ?string
+    {
+        return $this->code;
+    }
+
+    public function setCode(string $code): static
+    {
+        $this->code = $code;
+
+        return $this;
+    }
+
+    public function getDosage(): ?string
+    {
+        return $this->dosage;
+    }
+
+    public function setDosage(string $dosage): static
+    {
+        $this->dosage = $dosage;
+
+        return $this;
+    }
+
+
+    public function getExpirationDate(): ?\DateTimeImmutable
+    {
+        return $this->expirationDate;
+    }
+
+    public function setExpirationDate(?\DateTimeImmutable $expirationDate): static
+    {
+        $this->expirationDate = $expirationDate;
+
+        return $this;
+    }
+
+    public function getForm(): ?PharmaceuticalFormType
+    {
+        return $this->form;
+    }
+
+    public function setForm(PharmaceuticalFormType $form): self
+    {
+        $this->form = $form;
+        return $this;
+    }
+
+    public function getStock(): ?Stock
+    {
+        return $this->stock;
+    }
+
+    public function setStock(?Stock $stock): static
+    {
+        // unset the owning side of the relation if necessary
+        if ($stock === null && $this->stock !== null) {
+            $this->stock->setProduct(null);
+        }
+
+        // set the owning side of the relation if necessary
+        if ($stock !== null && $stock->getProduct() !== $this) {
+            $stock->setProduct($this);
+        }
+
+        $this->stock = $stock;
 
         return $this;
     }

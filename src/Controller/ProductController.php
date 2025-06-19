@@ -3,8 +3,10 @@
 namespace App\Controller;
 
 use App\Entity\Product;
+use App\Entity\Stock;
 use App\Form\ProductType;
 use App\Repository\ProductRepository;
+use App\Service\GenerateCode;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -29,15 +31,21 @@ final class ProductController extends AbstractController
     }
 
     #[Route('/new', name: 'app_product_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    public function new(Request $request, EntityManagerInterface $entityManager, GenerateCode $generateCode): Response
     {
         $product = new Product();
         $form = $this->createForm(ProductType::class, $product);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $product->setCode($generateCode->generateCodeProduct());
+            $stock = new Stock();
+            $stock->setProduct($product)->setQuantity($request->get('product')['quantityStock']);
+
             $entityManager->persist($product);
+            $entityManager->persist($stock);
             $entityManager->flush();
+
             $this->addFlash('success', 'Ajout du produit éffectué');
             return $this->redirectToRoute('app_product_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -59,10 +67,13 @@ final class ProductController extends AbstractController
     #[Route('/{id}/edit', name: 'app_product_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Product $product, EntityManagerInterface $entityManager): Response
     {
-        $form = $this->createForm(ProductType::class, $product);
+        $form = $this->createForm(ProductType::class, $product, [
+            'quantity_default' => $product->getStock()->getQuantity(),
+        ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $product->getStock()->setQuantity($request->get('product')['quantityStock']);
             $entityManager->flush();
             return $this->redirectToRoute('app_product_index', [], Response::HTTP_SEE_OTHER);
         }
