@@ -38,6 +38,9 @@ class Sale
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
+    #[ORM\ManyToOne(inversedBy: 'sales')]
+    private ?Client $clients = null;
+
     public function __construct()
     {
         $this->saleDetails = new ArrayCollection();
@@ -139,6 +142,18 @@ class Sale
     public function setCreatedAt(\DateTimeImmutable $createdAt): static
     {
         $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getClients(): ?Client
+    {
+        return $this->clients;
+    }
+
+    public function setClients(?Client $clients): static
+    {
+        $this->clients = $clients;
 
         return $this;
     }

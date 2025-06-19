@@ -6,52 +6,75 @@
             <div class="card">
                 {{ form_start(form, {'attr' : {'novalidate' : 'novalidate'}}) }}
                 <div class="card-body row">
-                    <div class="col-sm-12 col-md-6 col-lg-6 mb-3">
-                        {{ form_label(form.name) }}
-                        {{ form_widget(form.name) }}
-                        <div class="text-danger">
-                            {{ form_errors(form.name) }}
+                    <div class="row">
+                        <div class="col-sm-12 col-md-6 col-lg-6 mb-3">
+                            {{ form_label(form.name) }}
+                            {{ form_widget(form.name) }}
+                            <div class="text-danger">
+                                {{ form_errors(form.name) }}
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-sm-12 col-md-6 col-lg-6 mb-3o">
-                        {{ form_label(form.unitPrice) }}
-                        {{ form_widget(form.unitPrice) }}
-                        <div class="text-danger">
-                            {{ form_errors(form.unitPrice) }}
+                        <div class="col-sm-12 col-md-6 col-lg-6 mb-3o">
+                            {{ form_label(form.unitPrice) }}
+                            {{ form_widget(form.unitPrice) }}
+                            <div class="text-danger">
+                                {{ form_errors(form.unitPrice) }}
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-sm-12 col-md-6 col-lg-6 mb-3">
-                        {{ form_label(form.category) }}
-                        {{ form_widget(form.category) }}
-                        <div class="text-danger">
-                            {{ form_errors(form.category) }}
+                        <div class="col-sm-12 col-md-6 col-lg-6 mb-3">
+                            {{ form_label(form.category) }}
+                            {{ form_widget(form.category) }}
+                            <div class="text-danger">
+                                {{ form_errors(form.category) }}
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-sm-12 col-md-6 col-lg-6 mb-3">
-                        {{ form_label(form.supplier) }}
-                        {{ form_widget(form.supplier) }}
-                        <div class="text-danger">
-                            {{ form_errors(form.supplier) }}
+                        <div class="col-sm-12 col-md-6 col-lg-6 mb-3">
+                            {{ form_label(form.supplier) }}
+                            {{ form_widget(form.supplier) }}
+                            <div class="text-danger">
+                                {{ form_errors(form.supplier) }}
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-sm-12 col-md-6 col-lg-6 mb-3">
-                        {{ form_label(form.quantityStock) }}
-                        {{ form_widget(form.quantityStock) }}
-                        <div class="text-danger">
-                            {{ form_errors(form.quantityStock) }}
+                        <div class="col-sm-12 col-md-6 col-lg-6 mb-3">
+                            {{ form_label(form.quantityStock) }}
+                            {{ form_widget(form.quantityStock) }}
+                            <div class="text-danger">
+                                {{ form_errors(form.quantityStock) }}
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-sm-12 col-md-6 col-lg-6 mb-3">
-                        {{ form_label(form.description) }}
-                        {{ form_widget(form.description) }}
-                        <div class="text-danger">
-                            {{ form_errors(form.description) }}
+                        <div class="col-sm-12 col-md-6 col-lg-6 mb-3">
+                            {{ form_label(form.form) }}
+                            {{ form_widget(form.form) }}
+                            <div class="text-danger">
+                                {{ form_errors(form.form) }}
+                            </div>
                         </div>
-                    </div>
-                    <div class="col justify-content-start mb-2">
-                        <button class="btn btn-primary">{{ button_label|default('Enrégistrer') }}</button>
-                    </div>
+                        <div class="col-sm-12 col-md-6 col-lg-6 mb-3">
+                            {{ form_label(form.dosage) }}
+                            {{ form_widget(form.dosage) }}
+                            <div class="text-danger">
+                                {{ form_errors(form.dosage) }}
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-6 col-lg-6 mb-3">
+                            {{ form_label(form.expirationDate) }}
+                            {{ form_widget(form.expirationDate) }}
+                            <div class="text-danger">
+                                {{ form_errors(form.expirationDate) }}
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-6 col-lg-6 mb-3">
+                            {{ form_label(form.description) }}
+                            {{ form_widget(form.description) }}
+                            <div class="text-danger">
+                                {{ form_errors(form.description) }}
+                            </div>
 
+                        </div>
+                    </div>
+                    <div class="row">
+                        <button class="btn btn-success mt-3 col-sm-12 col-md-3 ">{{ button_label|default('Enrégistrer') }}</button>
+                    </div>
                 </div>
             </div>
             {{ form_end(form) }}

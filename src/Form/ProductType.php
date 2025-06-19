@@ -5,9 +5,12 @@ namespace App\Form;
 use App\Entity\Category;
 use App\Entity\Product;
 use App\Entity\Supplier;
+use App\Enum\PharmaceuticalFormType;
 use App\Utils\ErrorMessage;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -57,11 +60,20 @@ class ProductType extends AbstractType
                 'attr' => ['class' => 'form-control'],
                 'label_attr' => ['class' => 'form-label'],
                 'required' => true,
+                'mapped' => false,
+                'data' => $options['quantity_default'] ?? null,
                 'constraints' => [
                     new NotBlank(['message' => ErrorMessage::MESSAGE_DEFAULT]),
-
                 ],
-
+            ])
+            ->add('dosage', TextType::class, [
+                'label' => "Le dosage",
+                'attr' => ['class' => 'form-control'],
+                'label_attr' => ['class' => 'form-label'],
+                'required' => true,
+                'constraints' => [
+                    new NotBlank(['message' => ErrorMessage::MESSAGE_DEFAULT]),
+                ],
             ])
             ->add('category', EntityType::class, [
                 'label' => 'La catégorie',
@@ -81,7 +93,20 @@ class ProductType extends AbstractType
                     new NotBlank(['message' => ErrorMessage::MESSAGE_DEFAULT])
                 ]
             ])
-
+            ->add('expirationDate', DateType::class, [
+                'widget' => 'single_text',
+                'label' => 'Date d\'expiration',
+                'required' => false,
+                'label_attr' => ['class' => 'form-label'],
+            ])
+            ->add('form', EnumType::class, [
+                'class' => PharmaceuticalFormType::class,
+                'choice_label' => fn($choice) => $choice->value,
+                'label' => 'Forme pharmaceutique',
+                'constraints' => [
+                    new NotBlank(['message' => ErrorMessage::MESSAGE_DEFAULT])
+                ]
+            ]);
         ;
     }
 
@@ -89,6 +114,7 @@ class ProductType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Product::class,
+            'quantity_default' => null,
         ]);
     }
 }

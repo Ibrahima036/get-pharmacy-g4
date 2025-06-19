@@ -29,6 +29,12 @@ class Order
     #[ORM\JoinColumn(nullable: false)]
     private ?Supplier $supplier = null;
 
+    public function __construct() {
+        $this->orderDate = new \DateTimeImmutable();
+        $this->orderStatus = OrderStatus::InProgress;
+    }
+
+
     public function getId(): ?int
     {
         return $this->id;

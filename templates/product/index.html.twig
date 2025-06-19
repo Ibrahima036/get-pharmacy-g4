@@ -6,7 +6,7 @@
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h5 class="card-title fw-semibold mb-4">Liste des produits</h5>
-                    <a class="btn btn-primary" href="{{ path('app_product_new') }}"><i class="ti ti-plus"></i> Créer un
+                    <a class="btn btn-outline-success" href="{{ path('app_product_new') }}"><i class="ti ti-plus"></i> Créer un
                         produit</a>
                 </div>
                 <div class="table-responsive" data-simplebar>
@@ -43,7 +43,7 @@
                                     {% include('product/_partials/_status_product.twig') %}
                                 </td>
                                 <td>
-                                    <span class="text-dark">{{ product.quantityStock }}</span>
+                                    <span class="text-dark">{{ product.stock.quantity }}</span>
                                 </td>
                                 <td>
                                     <span class="badge bg-success-subtle text-info">{{ product.category.name }}</span>
