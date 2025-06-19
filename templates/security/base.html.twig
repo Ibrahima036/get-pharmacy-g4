@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>
+        {% block title %}EASY STOCK
+        {% endblock %}
+    </title>
+    <link rel="shortcut icon" type="image/png" href="{{ asset('assets/images/logos/favicon.png') }}"/>
+
+    <link rel="stylesheet"
+          href="{{ asset("assets/css/styles.min.css") }}"/>
+    <link rel="stylesheet"
+          href="{{ asset("assets/plugins/slimselect.css") }}"/>
+    <link rel="stylesheet"
+          href="{{ asset("assets/plugins/toastr.min.css") }}"/>
+
+    {% block stylesheets %}{% endblock %}
+
+</head>
+<body>
+{% block body %}{% endblock %}
+<script src="{{ asset("/assets/libs/jquery/dist/jquery.min.js") }}"></script>
+<script src="{{ asset("/assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js") }}"></script>
+<script src="{{ asset("/assets/js/sidebarmenu.js") }}"></script>
+<script src="{{ asset("/assets/js/app.min.js") }}"></script>
+<script src="{{ asset("/assets/libs/apexcharts/dist/apexcharts.min.js") }}"></script>
+<script src="{{ asset("/assets/libs/simplebar/dist/simplebar.js") }}"></script>
+<script src="{{ asset("/assets/js/dashboard.js") }}"></script>
+<script src="{{ asset("/assets/plugins/slimselect.min.js") }}"></script>
+<script src="{{ asset("/assets/plugins/toastr.min.js") }}"></script>
+<!-- solar icons -->
+<script src="https://cdn.jsdelivr.net/npm/iconify-icon@1.0.8/dist/iconify-icon.min.js"></script>
+<script>
+    {% for label, messages in app.flashes(['success', 'warning', 'error', 'info']) %}
+    {% for message in messages %}
+    toastr.{{ label }}('{{ message }}');
+    toastr.options = {
+        "closeButton": false,
+        "debug": false,
+        "newestOnTop": true,
+        "progressBar": true,
+        "positionClass": "toast-top-right",
+        "preventDuplicates": true,
+        "onclick": null,
+        "showDuration": "300",
+        "hideDuration": "1000",
+        "timeOut": "5000",
+        "extendedTimeOut": "1000",
+    };
+    {% endfor %}
+    {% endfor %}
+
+</script>
+{% block javascripts %}{% endblock %}
+</body>
+</html>
