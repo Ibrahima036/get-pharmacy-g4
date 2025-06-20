@@ -1,0 +1,54 @@
+{% extends 'base.html.twig' %}
+
+
+
+{% block body %}
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="card-title fw-semibold mb-4">Liste des clients</h5>
+
+                    <a class="btn btn-outline-success" href="{{ path('app_client_new') }}">Ajouter un client</a>
+                </div>
+                <div class="table-responsive" data-simplebar>
+                    <table class="table text-nowrap align-middle table-custom mb-0">
+                        <thead>
+                        <tr>
+                            <th scope="col" class="text-dark fw-normal ps-0">Prénom
+                            </th>
+                            <th scope="col" class="text-dark fw-normal">Nom</th>
+                            <th scope="col" class="text-dark fw-normal">assurance</th>
+                            <th scope="col" class="text-dark fw-normal">Création</th>
+                            <th scope="col" class="text-dark fw-normal">actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for client in clients %}
+                            <tr>
+                                <td><span class="text-dark">{{ client.firstname }}</span></td>
+                                <td><span class="text-dark">{{ client.lastname }}</span></td>
+                                <td><span class="text-dark">{{ client.assurance }}</span></td>
+                                <td>
+                                    <span class="text-dark">{{ client.createdAt ? client.createdAt|date('d/m/y') : '' }}</span>
+                                </td>
+                                <td>
+                                    <a href="{{ path('app_client_edit', {'id': client.id}) }}"
+                                       class="btn btn-light">edit</a>
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="5">Aucun client</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    <div class="navigation mt-3 d-flex justify-content-end align-items-center">
+                        {{ knp_pagination_render(clients) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

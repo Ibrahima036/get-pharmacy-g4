@@ -10,6 +10,12 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: ClientRepository::class)]
 class Client
 {
+    public function __construct()
+    {
+        $this->createdAt = new \DateTimeImmutable();
+        $this->updatedAt = new \DateTimeImmutable();
+        $this->sales = new ArrayCollection();
+    }
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -36,10 +42,7 @@ class Client
     #[ORM\OneToMany(targetEntity: Sale::class, mappedBy: 'clients')]
     private Collection $sales;
 
-    public function __construct()
-    {
-        $this->sales = new ArrayCollection();
-    }
+
 
     public function getId(): ?int
     {
