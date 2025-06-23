@@ -42,6 +42,9 @@ class Client
     #[ORM\OneToMany(targetEntity: Sale::class, mappedBy: 'clients')]
     private Collection $sales;
 
+    #[ORM\Column(length: 255)]
+    private ?string $phone = null;
+
 
 
     public function getId(): ?int
@@ -135,6 +138,24 @@ class Client
                 $sale->setClients(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getClientInfo(): string
+    {
+        return $this->firstname . ' ' . $this->lastname ;
+
+    }
+
+    public function getPhone(): ?string
+    {
+        return $this->phone;
+    }
+
+    public function setPhone(string $phone): static
+    {
+        $this->phone = $phone;
 
         return $this;
     }

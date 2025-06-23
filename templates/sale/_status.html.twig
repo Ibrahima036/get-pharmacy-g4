@@ -1,0 +1,7 @@
+{% if sale.status.value == 'payé' %}
+    <span class="badge bg-success"><i class="bi bi-check-circle-fill"></i> Payé</span>
+{% elseif sale.status.value == 'attente' %}
+    <span class="badge bg-warning text-dark"><i class="bi bi-clock-fill"></i> En attente</span>
+{% elseif sale.status.value == 'annule' %}
+    <span class="badge bg-danger"><i class="bi bi-x-circle-fill"></i> Annulée</span>
+{% endif %}

@@ -30,7 +30,8 @@ final class ProductController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $searchItem = $form->get('search')->getData();
-            $qb->andWhere('p.name LIKE :searchItem')->setParameter('searchItem', '%' . $searchItem . '%');
+            $qb->andWhere('p.name LIKE :searchItem')
+                ->setParameter('searchItem', '%' . $searchItem . '%');
         }
 
         $pagination = $paginator->paginate(

@@ -8,6 +8,9 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: SaleDetailsRepository::class)]
 class SaleDetails
 {
+    public function __construct(){
+        $this->createdAt = new \DateTimeImmutable();
+    }
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -22,7 +25,7 @@ class SaleDetails
     #[ORM\ManyToOne(inversedBy: 'saleDetails')]
     private ?Sale $sale = null;
 
-    #[ORM\ManyToOne(inversedBy: 'saleDetails')]
+    #[ORM\ManyToOne(cascade: ['persist', 'remove'], inversedBy: 'saleDetails')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Product $product = null;
 

@@ -20,8 +20,6 @@ class Sale
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $saleDate = null;
 
-    #[ORM\Column]
-    private ?int $totalAmount = null;
 
     #[ORM\Column(enumType: SaleStatus::class)]
     private ?SaleStatus $status = null;
@@ -32,18 +30,27 @@ class Sale
     /**
      * @var Collection<int, SaleDetails>
      */
-    #[ORM\OneToMany(targetEntity: SaleDetails::class, mappedBy: 'sale')]
+    #[ORM\OneToMany(targetEntity: SaleDetails::class, mappedBy: 'sale', cascade: ['persist', 'remove'])]
     private Collection $saleDetails;
 
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\ManyToOne(inversedBy: 'sales')]
-    private ?Client $clients = null;
+    private ?Client $client = null;
+
+    #[ORM\Column]
+    private ?float $total = null;
+
+    #[ORM\ManyToOne(inversedBy: 'sales')]
+    private ?User $user = null;
 
     public function __construct()
     {
         $this->saleDetails = new ArrayCollection();
+        $this->saleDate = new \DateTimeImmutable();
+        $this->createdAt = new \DateTimeImmutable();
+        $this->status = SaleStatus::Paid;
     }
 
     public function getId(): ?int
@@ -63,17 +70,6 @@ class Sale
         return $this;
     }
 
-    public function getTotalAmount(): ?int
-    {
-        return $this->totalAmount;
-    }
-
-    public function setTotalAmount(int $totalAmount): static
-    {
-        $this->totalAmount = $totalAmount;
-
-        return $this;
-    }
 
     public function getStatus(): ?SaleStatus
     {
@@ -148,12 +144,36 @@ class Sale
 
     public function getClients(): ?Client
     {
-        return $this->clients;
+        return $this->client;
     }
 
-    public function setClients(?Client $clients): static
+    public function setClient(?Client $client): static
     {
-        $this->clients = $clients;
+        $this->client = $client;
+
+        return $this;
+    }
+
+    public function getTotal(): ?float
+    {
+        return $this->total;
+    }
+
+    public function setTotal(float $total): static
+    {
+        $this->total = $total;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
 
         return $this;
     }

@@ -1,0 +1,202 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    {{ form_start(formSale,{'attr' : {'novalidate' : 'novalidate'}})  }}
+                    <div class="row justify-content-center align-content-center mb-4 mt-2">
+                        <div class="col-md-6 mt-4">
+                            {{ form_widget(formSale) }}
+                        </div>
+                        <div class="col-md-6 mt-4">
+                            <a href="{{ path('app_client_new') }}" class="btn btn-outline-success"><i class="bi bi-plus-circle"></i></a>
+                        </div>
+                    </div>
+                    {{ form_end(formSale) }}
+                </div>
+                <div class="card shadow mb-4">
+                    <div class="card-header bg-success text-white">
+                        <strong>🧾 Panier</strong>
+                    </div>
+                    <div class="card-body p-0 table-responsive" data-simplebar>
+                        <table class="table text-nowrap align-middle table-custom mb-0" id="cart">
+                            <thead >
+                            <tr>
+                                <th scope="col" class="text-dark fw-normal">Produit</th>
+                                <th scope="col" class="text-dark fw-normal">Qté</th>
+                                <th scope="col" class="text-dark fw-normal">PU</th>
+                                <th scope="col" class="text-dark fw-normal">Total</th>
+                                <th scope="col" class="text-dark fw-normal">Action</th>
+                            </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center mt-4">
+                    <h5>Total : <span id="total" class="text-primary fw-bold">0</span> GNF</h5>
+                    <button id="valider-vente" class="btn btn-success">
+                        <i class="bi bi-check-circle"></i> Valider la vente
+                    </button>
+                </div>
+
+                {{ form_start(form,{'attr' : {'novalidate' : 'novalidate'}})  }}
+                <div class="row justify-content-center align-content-center mb-4 mt-5">
+                    <div class="col-md-6 mt-4">
+                        {{ form_widget(form.search) }}
+                    </div>
+                    <div class="col-md-6 mt-4">
+                        <button type="submit" class="btn btn-outline-success">Rechercher</button>
+                    </div>
+                </div>
+                {{ form_end(form) }}
+
+                <div class="card shadow mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <strong>📦 Liste des produits disponibles</strong>
+                    </div>
+                    <div class="card-body p-0">
+                        <table class="table text-nowrap align-middle table-custom mb-0" id="product-list">
+                            <thead >
+                            <tr>
+                                <th scope="col" class="text-dark fw-normal">Produit</th>
+                                <th scope="col" class="text-dark fw-normal">Stock</th>
+                                <th scope="col" class="text-dark fw-normal">Prix</th>
+                                <th scope="col" class="text-dark fw-normal">Action</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for product in products %}
+                                <tr data-id="{{ product.id }}" data-stock="{{ product.stock.quantity }}"
+                                    data-price="{{ product.unitPrice }}">
+                                    <td class="text-dark">{{ product.name }}</td>
+                                    <td class="text-dark">{{ product.stock.quantity }}</td>
+                                    <td class="text-dark">{{ product.unitPrice|number_format(2) }} GNF</td>
+                                    <td class="text-dark">
+                                        <button class="btn btn-sm btn-success add-to-cart">
+                                            <i class="bi bi-plus-circle"></i> Ajouter
+                                        </button>
+                                    </td>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <td colspan="4" class="text-center text-muted">Aucun produit disponible</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                        <div class="navigation mt-3 d-flex justify-content-end align-items-center">
+                            {{ knp_pagination_render(products) }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        let clientId = '';
+        const select = document.querySelector('#sale_form_client');
+
+        if (select) {
+            clientId = select.value;
+            select.addEventListener('change', function () {
+                clientId = this.value;
+            });
+        }
+
+
+        const cart = [];
+        document.querySelectorAll('.add-to-cart').forEach(btn => {
+            btn.addEventListener('click', function () {
+                const row = this.closest('tr');
+                const id = row.dataset.id;
+                const name = row.children[0].textContent;
+                const price = parseFloat(row.dataset.price);
+                const stock = parseInt(row.dataset.stock);
+                const existing = cart.find(item => item.id === id);
+
+
+                if (existing) {
+                    if (existing.quantity < stock) {
+                        existing.quantity++;
+                    } else {
+                        alert('Stock insuffisant');
+                    }
+                } else {
+                    cart.push({id, name, price, quantity: 1});
+                }
+
+                updateCart();
+            });
+        });
+
+        function updateCart() {
+            const tbody = document.querySelector('#cart tbody');
+            tbody.innerHTML = '';
+            let total = 0;
+
+            cart.forEach(item => {
+                const row = document.createElement('tr');
+                const lineTotal = item.quantity * item.price;
+                total += lineTotal;
+
+                row.innerHTML = `
+                <td>${item.name}</td>
+                <td>${item.quantity}</td>
+                <td>${item.price.toFixed(2)}</td>
+                <td>${lineTotal.toFixed(2)}</td>
+                <td>
+                    <button class="btn btn-sm btn-danger" onclick="removeFromCart('${item.id}')">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </td>
+            `;
+                tbody.appendChild(row);
+            });
+
+            document.getElementById('total').textContent = total.toFixed(2);
+        }
+
+        function removeFromCart(id) {
+            const index = cart.findIndex(item => item.id === id);
+            if (index !== -1) {
+                cart.splice(index, 1);
+                updateCart();
+            }
+        }
+
+        document.getElementById('valider-vente').addEventListener('click', () => {
+            if (cart.length === 0) {
+                alert('Veuillez ajouter au moins un produit');
+                toastr.{{ 'info' }}('Veuillez ajouter au moins un produit');
+                return;
+            }
+
+            fetch('{{ path('app_sale_new') }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token("validate_sale") }}'
+                },
+                body: JSON.stringify({items: cart, id : clientId})
+            }).then(r => r.json()).then(res => {
+                if (res.success) {
+                    window.open(res.ticketUrl, '_blank');
+                    alert('✅ Vente enregistrée !');
+                    toastr.{{ 'success' }}('Vente enregistrée ');
+                    location.reload();
+                } else {
+                    alert('❌ Erreur : ' + res.error);
+                    toastr.{{ 'error' }}(res.error);
+                }
+            });
+        });
+    </script>
+{% endblock %}
