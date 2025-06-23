@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Ticket Vente #{{ sale.id }}</title>
+    <style>
+        body {
+            font-family: DejaVu Sans, sans-serif;
+            font-size: 10px;
+            margin: 0;
+            padding: 10px;
+        }
+        h2, p, th, td {
+            margin: 0;
+            padding: 2px;
+        }
+        .center { text-align: center; }
+        .line { border-top: 1px dashed #000; margin: 5px 0; }
+        table { width: 100%; border-collapse: collapse; }
+        td, th { text-align: left; padding: 2px; }
+        .text-end { text-align: right; }
+    </style>
+</head>
+<body>
+<div class="center">
+    <strong>BOUTIQUE IBRAHIM</strong><br>
+    Avenue Liberté, Conakry<br>
+    Tél : +224 620 000 000
+</div>
+
+<div class="line"></div>
+
+<p>Date : {{ sale.saleDate|date('d/m/Y H:i') }}</p>
+<p>Vente N° : #{{ sale.id }}</p>
+<p>Vendeur : {{ sale.user.username }}</p>
+{% if sale.client is defined %}
+    <p>Client : {{ sale.client.lastname }}</p>
+{% endif %}
+
+<div class="line"></div>
+
+<table>
+    <thead>
+    <tr>
+        <th>Produit</th>
+        <th class="text-end">Qté</th>
+        <th class="text-end">PU</th>
+        <th class="text-end">Total</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for detail in sale.saleDetails %}
+        <tr>
+            <td>{{ detail.product.name|slice(0,15) }}</td>
+            <td class="text-end">{{ detail.quantity }}</td>
+            <td class="text-end">{{ detail.unitPrice|number_format(0, '.', ' ') }}</td>
+            <td class="text-end">{{ (detail.unitPrice * detail.quantity)|number_format(0, '.', ' ') }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+<div class="line"></div>
+
+<p class="text-end"><strong>Total à payer :</strong> {{ sale.total|number_format(0, '.', ' ') }} GNF</p>
+<div class="line"></div>
+
+<div class="center">Merci pour votre achat</div>
+</body>
+</html>

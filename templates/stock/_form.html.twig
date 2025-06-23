@@ -1,0 +1,26 @@
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title fw-semibold mb-4">GESTION STOCK</h5>
+            <div class="card">
+                {{ form_start(form, {'attr' : {'novalidate' : 'novalidate'}}) }}
+                <div class="card-body row">
+
+                    <div class="mb-3 col-sm-6 col-md-6">
+                        {{ form_label(form.quantity) }}
+                        {{ form_widget(form.quantity) }}
+                        <div class="text-danger">
+                            {{ form_errors(form.quantity) }}
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-md-6 mt-3">
+                        <button type="submit" class="btn btn-success mt-3">Enrégistrer</button>
+                    </div>
+                </div>
+
+                {{ form_end(form) }}
+            </div>
+
+        </div>
+    </div>
+</div>

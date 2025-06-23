@@ -53,7 +53,7 @@ class AppFixtures extends Fixture
 
         for ($i = 0; $i < 100; $i++) {
             $client = new Client();
-            $client->setFirstname($faker->firstName())->setLastname($faker->lastName())->setAssurance($faker->company);
+            $client->setFirstname($faker->firstName())->setLastname($faker->lastName())->setAssurance($faker->company)->setPhone($faker->e164PhoneNumber());
             $manager->persist($client);
         }
 

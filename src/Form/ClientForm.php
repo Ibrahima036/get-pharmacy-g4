@@ -38,6 +38,17 @@ class ClientForm extends AbstractType
                 ],
 
             ])
+            ->add('phone', TextType::class, [
+                'label' => "Telephone",
+                'attr' => ['class' => 'form-control'],
+                'label_attr' => ['class' => 'form-label'],
+                'required' => true,
+                'constraints' => [
+                    new NotBlank(['message' => ErrorMessage::MESSAGE_DEFAULT]),
+                    new NotNull(['message' => ErrorMessage::MESSAGE_ERROR_VOID])
+                ],
+
+            ])
             ->add('assurance', TextType::class, [
                 'label' => "L'assurance",
                 'attr' => ['class' => 'form-control'],
