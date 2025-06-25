@@ -17,8 +17,13 @@
                     {{ form_end(formSale) }}
                 </div>
                 <div class="card shadow mb-4">
-                    <div class="card-header bg-success text-white">
+                    <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
                         <strong>🧾 Panier</strong>
+
+                        <a href="{{ path('app_clear_session') }}" class="btn btn-danger btn-md">
+                            <i class="bi bi-trash"></i> Vider
+                        </a>
+
                     </div>
                     <div class="card-body p-0 table-responsive" data-simplebar>
                         <table class="table text-nowrap align-middle table-custom mb-0" id="cart">
@@ -31,13 +36,34 @@
                                 <th scope="col" class="text-dark fw-normal">Action</th>
                             </tr>
                             </thead>
-                            <tbody></tbody>
+                            <tbody>
+                            {% for cart in carts %}
+                                <tr>
+                                    <td class="text-dark">{{ cart.product.name }}</td>
+                                    <td class="text-dark product-quantity" data-product-id="{{ cart.product.id }}">{{ cart.quantity }}</td>
+                                    <td class="text-dark">{{ cart.product.unitPrice|number_format(2) }} GNF</td>
+                                    <td class="text-dark">{{ cart.total |number_format(2) }} GNF</td>
+                                    <td class="text-dark">
+                                        <a class="btn btn-sm btn-warning remove-to-cart" href="{{ path('app_cart_decrement', {'id' : cart.product.id}) }}" >
+                                            <i class="bi bi-dash-circle"></i>
+                                        </a>
+                                        <a class="btn btn-sm btn-danger add-to-cart" href="{{ path('app_cart_remove', {'id' : cart.product.id}) }}">
+                                            <i class="bi bi-trash-fill"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <td colspan="4" class="text-center text-muted">Aucun produit dans le panier</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
                         </table>
                     </div>
                 </div>
 
                 <div class="d-flex justify-content-between align-items-center mt-4">
-                    <h5>Total : <span id="total" class="text-primary fw-bold">0</span> GNF</h5>
+                    <h5>Total : <span id="total" class="text-primary fw-bold">{{ total |number_format(2) }}</span> GNF</h5>
                     <button id="valider-vente" class="btn btn-success">
                         <i class="bi bi-check-circle"></i> Valider la vente
                     </button>
@@ -71,7 +97,7 @@
                             <tbody>
                             {% for product in products %}
                                 <tr data-id="{{ product.id }}" data-stock="{{ product.stock.quantity }}"
-                                    data-price="{{ product.unitPrice }}">
+                                    data-price="{{ product.unitPrice }}" data-url="{{ path('app_cart_add', {'id': product.id}) }}">
                                     <td class="text-dark">{{ product.name }}</td>
                                     <td class="text-dark">{{ product.stock.quantity }}</td>
                                     <td class="text-dark">{{ product.unitPrice|number_format(2) }} GNF</td>
@@ -111,68 +137,39 @@
             });
         }
 
-
-        const cart = [];
         document.querySelectorAll('.add-to-cart').forEach(btn => {
-            btn.addEventListener('click', function () {
+            btn.addEventListener('click', function (event) {
                 const row = this.closest('tr');
-                const id = row.dataset.id;
-                const name = row.children[0].textContent;
-                const price = parseFloat(row.dataset.price);
-                const stock = parseInt(row.dataset.stock);
-                const existing = cart.find(item => item.id === id);
+                const productId = row.dataset.id;
+                const url = row.dataset.url;
 
-
-                if (existing) {
-                    if (existing.quantity < stock) {
-                        existing.quantity++;
-                    } else {
-                        alert('Stock insuffisant');
-                    }
-                } else {
-                    cart.push({id, name, price, quantity: 1});
-                }
-
-                updateCart();
+                fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token("validate_sale") }}'
+                    },
+                }).then(response => response.json())
+                    .then(res => {
+                        if (res.success) {
+                            toastr.{{ 'success' }}('Produit rajouté au panier');
+                        } else {
+                            toastr.{{ 'error' }}(res.error);
+                        }
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 1000);
+                    })
+                    .catch(error => {
+                        console.error("Erreur :", error);
+                    });
             });
         });
 
-        function updateCart() {
-            const tbody = document.querySelector('#cart tbody');
-            tbody.innerHTML = '';
-            let total = 0;
-
-            cart.forEach(item => {
-                const row = document.createElement('tr');
-                const lineTotal = item.quantity * item.price;
-                total += lineTotal;
-
-                row.innerHTML = `
-                <td>${item.name}</td>
-                <td>${item.quantity}</td>
-                <td>${item.price.toFixed(2)}</td>
-                <td>${lineTotal.toFixed(2)}</td>
-                <td>
-                    <button class="btn btn-sm btn-danger" onclick="removeFromCart('${item.id}')">
-                        <i class="bi bi-trash"></i>
-                    </button>
-                </td>
-            `;
-                tbody.appendChild(row);
-            });
-
-            document.getElementById('total').textContent = total.toFixed(2);
-        }
-
-        function removeFromCart(id) {
-            const index = cart.findIndex(item => item.id === id);
-            if (index !== -1) {
-                cart.splice(index, 1);
-                updateCart();
-            }
-        }
 
         document.getElementById('valider-vente').addEventListener('click', () => {
+            const cart = {{ app.session.get('cart')|json_encode|raw }};
+
             if (cart.length === 0) {
                 alert('Veuillez ajouter au moins un produit');
                 toastr.{{ 'info' }}('Veuillez ajouter au moins un produit');
@@ -185,7 +182,7 @@
                     'Content-Type': 'application/json',
                     'X-CSRF-TOKEN': '{{ csrf_token("validate_sale") }}'
                 },
-                body: JSON.stringify({items: cart, id : clientId})
+                body: JSON.stringify({ id : clientId})
             }).then(r => r.json()).then(res => {
                 if (res.success) {
                     window.open(res.ticketUrl, '_blank');

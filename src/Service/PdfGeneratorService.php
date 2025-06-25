@@ -16,6 +16,11 @@ readonly class PdfGeneratorService
         private Environment $twig
     ) {}
 
+    /**
+     * @throws SyntaxError
+     * @throws RuntimeError
+     * @throws LoaderError
+     */
     public function generateTicket(string $template, array $data, string $filename = 'ticket.pdf'): Response
     {
         return $this->generatePdf($template, $data, $filename, [0, 0, 226.77, 600]); // 80mm largeur

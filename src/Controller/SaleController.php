@@ -11,7 +11,6 @@ use App\Repository\ProductRepository;
 use App\Repository\SaleRepository;
 use App\Service\PdfGeneratorService;
 use Doctrine\ORM\EntityManagerInterface;
-use JetBrains\PhpStorm\NoReturn;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -22,6 +21,9 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Dompdf\Dompdf;
 use Dompdf\Options;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
 
 #[Route('admin/sale')]
 final class SaleController extends AbstractController
@@ -54,6 +56,8 @@ final class SaleController extends AbstractController
             'products' => $pagination,
             'form' => $form->createView(),
             'formSale' => $formSale->createView(),
+            'carts' => $this->getCart($request, $productRepository),
+            'total' => $this->getTotal($request, $productRepository),
         ]);
     }
 
@@ -71,48 +75,55 @@ final class SaleController extends AbstractController
         ]);
     }
 
-   #[Route('/new', name: 'app_sale_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager, ProductRepository $productRepository, #[CurrentUser] $currentUser,  UrlGeneratorInterface $urlGenerator): JsonResponse
+   #[Route('/validate-cart', name: 'app_sale_new', methods: ['GET', 'POST'])]
+    public function validateCart(Request $request, EntityManagerInterface $entityManager, ProductRepository $productRepository, #[CurrentUser] $currentUser,  UrlGeneratorInterface $urlGenerator): JsonResponse
     {
-        $data = json_decode($request->getContent(), true);
-
-        if (!$data['id']){
-            $this->addFlash('error', 'Veuillez selectionner un client');
-            return new JsonResponse(['error' => 'Veuillez selectionner un client'], 400);
-        }
-
-        $client = $entityManager->getRepository(Client::class)->findOneBy(['id' => $data['id']]);
-
-        if (!$client) {
-            $this->addFlash('error', 'Client non trouvé');
-            return new JsonResponse(['error' => 'Client non trouvé'], 400);
-        }
-
         $sale = new Sale();
         $total = 0;
 
-        foreach ($data['items'] as $item) {
-            $product = $productRepository->find($item['id']);
-            if (!$product || $product->getStock()->getQuantity() < $item['quantity']) {
+        $data = json_decode($request->getContent(), true);
+        $carts = $request->getSession()->get('cart');
+
+        if (count($carts) === 0) {
+            return new JsonResponse(['error' => 'Veuillez ajouter au moins un produit.'], 400);
+        }
+
+        if ($data['id']){
+            $client = $entityManager->getRepository(Client::class)->findOneBy(['id' => $data['id']]);
+
+            if (!$client) {
+                $this->addFlash('error', 'Client non trouvé');
+                return new JsonResponse(['error' => 'Client non trouvé'], 400);
+            }
+
+            $sale->setClient($client);
+        }
+
+
+        foreach ($carts  as $id => $quantity) {
+            $product = $productRepository->find($id);
+            if (!$product || $product->getStock()->getQuantity() < $quantity) {
                 return new JsonResponse(['error' => 'Produit indisponible'], 400);
             }
 
             $saleDetail = new SaleDetails();
             $saleDetail->setProduct($product);
-            $saleDetail->setQuantity($item['quantity']);
+            $saleDetail->setQuantity($quantity);
             $saleDetail->setUnitPrice($product->getUnitPrice());
             $saleDetail->setSale($sale);
             $sale->addSaleDetail($saleDetail);
 
-            $product->getStock()->setQuantity($product->getStock()->getQuantity() - $item['quantity']);
-            $total += $product->getUnitPrice() * $item['quantity'];
+            $product->getStock()->setQuantity($product->getStock()->getQuantity() - $quantity);
+            $total += $product->getUnitPrice() * $quantity;
         }
 
-        $sale->setTotal($total)->setUser($currentUser)->setClient($client);
+        $sale->setTotal($total)->setUser($currentUser);
         $entityManager->persist($sale);
         $entityManager->flush();
 
         $this->addFlash('success', 'Vente effectuée avec success');
+
+        $request->getSession()->remove('cart');
 
         // Générer l'URL du ticket à retourner
         $ticketUrl = $urlGenerator->generate('app_sale_ticket', [
@@ -125,15 +136,13 @@ final class SaleController extends AbstractController
         ]);
     }
 
-
-    #[Route('/{id}', name: 'app_sale_show', methods: ['GET'])]
+    #[Route('/{id}', name: 'app_sale_show', requirements: ['id' => '\d+'], methods: ['GET'])]
     public function show(Sale $sale): Response
     {
         return $this->render('sale/show.html.twig', [
             'sale' => $sale,
         ]);
     }
-
 
     #[Route('/ventes/{id}/ticket', name: 'app_sale_ticket')]
     public function ticket(Sale $sale, PdfGeneratorService $pdf): Response
@@ -143,32 +152,117 @@ final class SaleController extends AbstractController
         ], 'ticket_vente_' . $sale->getId() . '.pdf');
     }
 
-
+    /**
+     * @throws SyntaxError
+     * @throws RuntimeError
+     * @throws LoaderError
+     */
     #[Route('/ventes/{id}/facture', name: 'app_sale_invoice')]
-    public function generateInvoice(Sale $sale): Response
+    public function generateInvoice(Sale $sale, PdfGeneratorService $pdf): Response
     {
-        // Options PDF
-        $options = new Options();
-        $options->set('defaultFont', 'DejaVu Sans');
-        $dompdf = new Dompdf($options);
+        return $pdf->generateInvoice('sale/invoice.html.twig', ['sale' => $sale], 'invoice_vente_' . $sale->getId() . '.pdf');
+    }
+    #[Route('/add/{id}', name: 'app_cart_add',  methods: ['POST'])]
+    public function add(int $id, Request $request, ProductRepository $productRepository): JsonResponse
+    {
+        $product = $productRepository->find($id);
+        if (!$product) {
+            return new JsonResponse([
+                'error' => 'Produit non trouvé',
+            ]);
+        }
 
-        // Rendu HTML
-        $html = $this->renderView('sale/pdf.html.twig', [
-            'sale' => $sale,
+        $cart = $request->getSession()->get('cart', []);
+        $cart[$id] = ($cart[$id] ?? 0) + 1;
+
+        if ($cart[$id] > $product->getStock()->getQuantity()) {
+
+            return new JsonResponse([
+                'error' => 'Stock disponible',
+            ]);
+        }
+
+        $request->getSession()->set('cart', $cart);
+
+        return new JsonResponse([
+            'success' => true,
         ]);
+    }
 
-        $dompdf->loadHtml($html);
-        $dompdf->setPaper('A4', 'portrait');
-        $dompdf->render();
+    #[Route('/remove/{id}', name: 'app_cart_remove',  methods: ['POST', 'GET'])]
+    public function remove(int $id, Request $request): Response
+    {
+        $cart = $request->getSession()->get('cart', []);
+        if (isset($cart[$id])) {
+            unset($cart[$id]);
+        }
 
-        return new Response(
-            $dompdf->output(),
-            200,
-            [
-                'Content-Type' => 'application/pdf',
-                'Content-Disposition' => 'inline; filename="facture_vente_' . $sale->getId() . '.pdf"'
-            ]
-        );
+        $request->getSession()->set('cart', $cart);
+        $this->addFlash('success', 'Produit supprimé avec success');
+        return $this->redirectToRoute('app_sale_index');
+    }
+
+    #[Route('/decrement/{id}', name: 'app_cart_decrement',  methods: ['POST', 'GET'])]
+    public function decrement(int $id, Request $request): Response
+    {
+        $cart = $request->getSession()->get('cart', []);
+        if (!isset($cart[$id])) {
+             $this->addFlash('error', 'Produit non trouvé');
+            return $this->redirectToRoute('app_sale_index');
+        }
+
+        if ($cart[$id] > 1) {
+            $cart[$id]--;
+        } else {
+            unset($cart[$id]);
+        }
+
+        $request->getSession()->set('cart', $cart);
+        $this->addFlash('success', 'Produit decrementé avec success');
+        return $this->redirectToRoute('app_sale_index');
+    }
+
+    #[Route('/remove-cart', name: 'app_clear_session',  methods: ['POST', 'GET'])]
+    public function clear(Request $request): Response
+    {
+        if (count($request->getSession()->get('cart', [])) === 0) {
+            $this->addFlash('error', 'Votre panier est vide');
+            return $this->redirectToRoute('app_sale_index');
+        }
+
+        $request->getSession()->remove('cart');
+
+        $this->addFlash('success', 'Panier  vidé avec success');
+        return $this->redirectToRoute('app_sale_index');
+    }
+
+    private function getCart(Request $request, ProductRepository $productRepository): array
+    {
+        $cart = $request->getSession()->get('cart', []);
+        $data = [];
+
+        foreach ($cart as $id => $quantity) {
+            $product = $productRepository->find($id);
+            if ($product) {
+                $data[] = [
+                    'product' => $product,
+                    'quantity' => $quantity,
+                    'total' => $product->getUnitPrice() * $quantity,
+                ];
+            }
+        }
+
+        return $data;
+    }
+
+    private function getTotal(Request $request, ProductRepository $productRepository): float
+    {
+        $total = 0;
+        foreach ($this->getCart($request, $productRepository) as $item) {
+            $total += $item['product']->getUnitPrice() * $item['quantity'];
+        }
+
+        return $total;
     }
 
 }

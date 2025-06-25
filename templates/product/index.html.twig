@@ -64,8 +64,8 @@
                                     <span class="text-dark">{{ product.createdAt | date('d/m/y') }}</span>
                                 </td>
                                 <td>
-                                    <a href="#" class="btn btn-light">view</a>
-                                    <a href="{{ path('app_product_edit', {'id' : product.id}) }}" class="btn btn-light">edit</a>
+                                    <a href="#" class="btn btn-light"><i class="bi bi-eye"></i></a>
+                                    <a href="{{ path('app_product_edit', {'id' : product.id}) }}" class="btn btn-light"><i class="bi bi-pencil"></i></a>
                                 </td>
                             </tr>
                         {% endfor %}
