@@ -22,7 +22,7 @@ final class OrderController extends AbstractController
         ]);
     }
 
-    #[Route('/new', name: 'app_order_new', methods: ['GET', 'POST'])]
+    #[Route('/new', name: 'app_order_new', methods: ['POST', 'GET'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
         $order = new Order();
