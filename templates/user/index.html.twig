@@ -1,0 +1,61 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="card-title fw-semibold mb-4">Liste des utilisateurs</h5>
+
+                    <a class="btn btn-outline-success" href="{{ path('app_user_new') }}">Ajouter un utilisateur</a>
+                </div>
+                <div class="table-responsive" data-simplebar>
+                    <table class="table text-nowrap align-middle table-custom mb-0">
+                        <thead>
+                        <tr>
+                            <th scope="col" class="text-dark fw-normal ps-0">Prénom
+                            </th>
+                            <th scope="col" class="text-dark fw-normal">Nom</th>
+                            <th scope="col" class="text-dark fw-normal">Email</th>
+                            <th scope="col" class="text-dark fw-normal">Roles</th>
+                            <th scope="col" class="text-dark fw-normal">actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for user in users %}
+                            <tr>
+                                <td><span class="text-dark">{{ user.firstname }}</span></td>
+                                <td><span class="text-dark">{{ user.lastname }}</span></td>
+                                <td><span class="text-dark">{{ user.username }}</span></td>
+                                <td>
+                                    {% for role in user.roles %}
+                                        {% set label = {
+                                            'ROLE_ADMIN': 'Administrateur',
+                                            'ROLE_PHARMACIST': 'Pharmacient',
+                                            'ROLE_SELLER': 'Vendeur'
+                                        }[role] ?? role %}
+
+                                        <span class="badge bg-primary me-1">{{ label }}</span>
+                                    {% endfor %}
+                                </td>
+
+                                <td>
+                                    <a href="{{ path('app_user_edit', {'id': user.id}) }}"
+                                       class="btn btn-light"><i class="bi bi-pencil"></i></a>
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="5">Aucun user</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    <div class="navigation mt-3 d-flex justify-content-end align-items-center">
+                        {{ knp_pagination_render(users) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
