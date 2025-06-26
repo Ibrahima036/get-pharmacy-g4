@@ -160,7 +160,12 @@ final class SaleController extends AbstractController
     #[Route('/ventes/{id}/facture', name: 'app_sale_invoice')]
     public function generateInvoice(Sale $sale, PdfGeneratorService $pdf): Response
     {
-        return $pdf->generateInvoice('sale/invoice.html.twig', ['sale' => $sale], 'invoice_vente_' . $sale->getId() . '.pdf');
+        $configuration = [
+            "nameCompagny" => "Pharma Stock",
+            "adress" => "Conakry, Guinée",
+            "phone" => "+224 621 90 90 90"
+        ];
+        return $pdf->generateInvoice('sale/ticket.html.twig', ['sale' => $sale, "config" => $configuration], 'invoice_vente_' . $sale->getId() . '.pdf');
     }
     #[Route('/add/{id}', name: 'app_cart_add',  methods: ['POST'])]
     public function add(int $id, Request $request, ProductRepository $productRepository): JsonResponse
