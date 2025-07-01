@@ -16,11 +16,20 @@
                 {{ form_end(form) }}
 
 
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h5 class="card-title fw-semibold mb-4">Liste des produits</h5>
-                    <a class="btn btn-outline-success" href="{{ path('app_product_new') }}"><i class="ti ti-plus"></i> Créer un
-                        produit</a>
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h5 class="card-title fw-semibold mb-0">
+                        Liste des produits
+                    </h5>
+                    <div class="d-flex gap-2">
+                        <a href="{{ path('export_sales_excel') }}" class="btn btn-primary">
+                            <i class="bi bi-download"></i> Exporter les produits CSV
+                        </a>
+                        <a class="btn btn-outline-success" href="{{ path('app_product_new') }}">
+                            <i class="ti ti-plus"></i> Créer un produit
+                        </a>
+                    </div>
                 </div>
+
                 <div class="table-responsive" data-simplebar>
                     <table class="table text-nowrap align-middle table-custom mb-0">
                         <thead>

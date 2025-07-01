@@ -17,7 +17,7 @@
                                          role="alert">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
                                 {% endif %}
                                 <a href="#" class="text-nowrap logo-img text-center d-block py-3 w-100">
-                                    <img src="../assets/images/logos/logo.svg" alt="">
+                                    <img src="{{ asset('assets/images/logos.png') }}" alt="" style="width: 150px">
                                 </a>
                                 <form action="{{ path('app_login') }}" method="post">
                                     <div class="mb-3">

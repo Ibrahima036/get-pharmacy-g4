@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Facture</title>
+    <style>
+        body {
+            font-family: DejaVu Sans, sans-serif;
+            color: #333;
+            font-size: 12px;
+            line-height: 1.4;
+            margin: 0;
+            padding: 0;
+        }
+        .invoice-box {
+            max-width: 800px;
+            margin: auto;
+            padding: 30px;
+            border: 1px solid #eee;
+            background: #fff;
+        }
+        .logo {
+            width: 120px;
+        }
+        table {
+            width: 100%;
+            line-height: inherit;
+            text-align: left;
+            border-collapse: collapse;
+        }
+        table td {
+            padding: 5px;
+            vertical-align: top;
+        }
+        table th {
+            background: #f5f5f5;
+            font-weight: bold;
+            padding: 8px;
+        }
+        .title {
+            font-size: 28px;
+            font-weight: bold;
+            color: #4CAF50;
+        }
+        .information {
+            margin-bottom: 20px;
+        }
+        .heading {
+            background: #eee;
+            border-bottom: 1px solid #ddd;
+            font-weight: bold;
+        }
+        .item {
+            border-bottom: 1px solid #eee;
+        }
+        .item.last {
+            border-bottom: none;
+        }
+        .total {
+            font-weight: bold;
+        }
+        .right {
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+<div class="invoice-box">
+    <table>
+        <tr>
+            <td>
+                <img src="public/assets/images/logos.png" class="logo"  alt="logo"/>
+            </td>
+            <td class="right">
+                <span class="title">FACTURE</span><br>
+                N°: {{ sale.id }}<br>
+                Date: {{ sale.createdAt | date('y-m-h') }}
+            </td>
+        </tr>
+    </table>
+
+    <table class="information">
+        <tr>
+            <td>
+                <strong>De:</strong><br>
+                Votre Société<br>
+                Kolama<br>
+                611111111
+            </td>
+        </tr>
+    </table>
+
+    <table>
+        <tr>
+            <th>Produit / Service</th>
+            <th>Quantité</th>
+            <th>Prix Unitaire</th>
+            <th>Total</th>
+        </tr>
+
+        {% for detail in sale.saleDetails %}
+            <tr class="item">
+                <td>{{ detail.product.name|slice(0,15) }}</td>
+                <td class="text-end">{{ detail.quantity }}</td>
+                <td class="text-end">{{ detail.unitPrice|number_format(0, '.', ' ') }}FG</td>
+                <td class="text-end">{{ (detail.unitPrice * detail.quantity)|number_format(0, '.', ' ') }}FG</td>
+            </tr>
+        {% endfor %}
+
+        <tr class="total">
+            <td colspan="3" class="right">Sous-total :</td>
+            <td>{{ sale.total|number_format(2, ',', ' ') }} FGN</td>
+        </tr>
+        <tr class="total">
+            <td colspan="3" class="right">Total :</td>
+            <td>{{ sale.total|number_format(2, ',', ' ') }} FGN</td>
+        </tr>
+    </table>
+
+    <p style="margin-top:30px; font-size:10px; color:#999;">
+        Merci pour votre confiance.
+    </p>
+</div>
+</body>
+</html>
