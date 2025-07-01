@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\SaleDetails;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -16,28 +17,19 @@ class SaleDetailsRepository extends ServiceEntityRepository
         parent::__construct($registry, SaleDetails::class);
     }
 
-    //    /**
-    //     * @return SaleDetails[] Returns an array of SaleDetails objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('s')
-    //            ->andWhere('s.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('s.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    public function getTopProductsBySeller(User $seller, int $limit = 5): array
+    {
+        return $this->createQueryBuilder('d')
+            ->select('p.name AS productName, SUM(d.quantity) AS totalQuantity, SUM(d.quantity * d.unitPrice) AS totalRevenue')
+            ->join('d.product', 'p')
+            ->join('d.sale', 's')
+            ->where('s.user = :seller')
+            ->groupBy('p.id')
+            ->orderBy('totalQuantity', 'DESC')
+            ->setMaxResults($limit)
+            ->setParameter('seller', $seller)
+            ->getQuery()
+            ->getResult();
+    }
 
-    //    public function findOneBySomeField($value): ?SaleDetails
-    //    {
-    //        return $this->createQueryBuilder('s')
-    //            ->andWhere('s.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
 }

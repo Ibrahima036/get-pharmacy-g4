@@ -29,12 +29,11 @@ security:
 
 
   access_control:
-    - { path: ^/admin, roles: ROLE_ADMIN }
-    - { path: ^/profile, roles: ROLE_USER }
+    - { path: ^/admin, roles: [ROLE_ADMIN, ROLE_PHARMACIST, ROLE_SELLER ] }
+    - { path: ^/pharmacist, roles: ROLE_PHARMACIST }
+    - { path: ^/seller/dashboard, roles: ROLE_SELLER }
 
-  role_hierarchy:
-    ROLE_ADMIN: ROLE_USER
-    ROLE_SUPER_ADMIN: [ ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH ]
+
 
 when@test:
   security:
