@@ -144,6 +144,11 @@ final class SaleController extends AbstractController
         ]);
     }
 
+    /**
+     * @throws SyntaxError
+     * @throws RuntimeError
+     * @throws LoaderError
+     */
     #[Route('/ventes/{id}/ticket', name: 'app_sale_ticket')]
     public function ticket(Sale $sale, PdfGeneratorService $pdf): Response
     {

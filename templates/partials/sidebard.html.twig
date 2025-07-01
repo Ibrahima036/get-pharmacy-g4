@@ -1,6 +1,5 @@
 <!-- Sidebar Start -->
-<aside
-	class="left-sidebar">
+<aside class="left-sidebar">
 	<!-- Sidebar scroll-->
 	<div>
 		<div class="brand-logo d-flex align-items-center justify-content-between">
@@ -12,116 +11,152 @@
 			</div>
 		</div>
 		<!-- Sidebar navigation-->
-		<nav class="sidebar-nav scroll-sidebar" data-simplebar="">
+		<nav class="sidebar-nav scroll-sidebar" data-simplebar>
 			<ul id="sidebarnav">
+				<!-- Home -->
 				<li class="nav-small-cap">
-					<iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+					<iconify-icon icon="solar:home-2-line-duotone" class="nav-small-cap-icon fs-4"></iconify-icon>
 					<span class="hide-menu">Home</span>
 				</li>
-				<li class="sidebar-item">
-					<a class="sidebar-link" href="{{ path('app_dashboard')}}" aria-expanded="false">
-						<iconify-icon icon="solar:widget-add-line-duotone"></iconify-icon>
-						<span class="hide-menu">Dashboard</span>
-					</a>
-				</li>
-				<li>
-					<span class="sidebar-divider lg"></span>
-				</li>
-				<li class="nav-small-cap">
-					<iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
-					<span class="hide-menu">PRODUITS</span>
-				</li>
-				<li class="sidebar-item">
-					<a class="sidebar-link" href="{{ path("app_product_index") }}" aria-expanded="false">
-						<iconify-icon icon="solar:layers-minimalistic-bold-duotone"></iconify-icon>
-						<span class="hide-menu">liste produits</span>
-					</a>
-				</li>
-				<li>
-					<span class="sidebar-divider lg"></span>
-				</li>
-				<li class="nav-small-cap">
-					<iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
-					<span class="hide-menu">CATEGORIES</span>
-				</li>
-				<li class="sidebar-item">
-					<a class="sidebar-link" href="{{ path("app_category_index") }}" aria-expanded="false">
-						<i class="ti ti-category nav-small-cap-icon fs-4"></i>
-						<span class="hide-menu">liste categories</span>
-					</a>
-				</li>
-				<li>
-					<span class="sidebar-divider lg"></span>
-				</li>
 
-				<li class="nav-small-cap">
-					<iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
-					<span class="hide-menu">FOURNISSEURS</span>
-				</li>
-				<li class="sidebar-item">
-					<a class="sidebar-link" href="{{ path("app_supplier_index") }}" aria-expanded="false">
-						<i class="ti ti-truck-delivery nav-small-cap-icon fs-4"></i>
-						<span class="hide-menu">liste fournisseurs</span>
-					</a>
-				</li>
-				<li>
-					<span class="sidebar-divider lg"></span>
-				</li>
+				<!-- Dashboards -->
+				{% if is_granted('ROLE_ADMIN') %}
+					<li class="sidebar-item">
+						<a class="sidebar-link" href="{{ path('app_dashboard_admin') }}">
+							<iconify-icon icon="solar:graph-new-up-linear" class="fs-5"></iconify-icon>
+							<span class="hide-menu">Dashboard</span>
+						</a>
+					</li>
+				{% endif %}
+				{% if is_granted('ROLE_SELLER') %}
+					<li class="sidebar-item">
+						<a class="sidebar-link" href="{{ path('app_dashboard_seller') }}">
+							<iconify-icon icon="solar:chart-2-linear" class="fs-5"></iconify-icon>
+							<span class="hide-menu">Dashboard</span>
+						</a>
+					</li>
+				{% endif %}
+				{% if is_granted('ROLE_PHARMACIST') %}
+					<li class="sidebar-item">
+						<a class="sidebar-link" href="{{ path('app_dashboard_pharmacist') }}">
+							<iconify-icon icon="solar:chart-square-linear" class="fs-5"></iconify-icon>
+							<span class="hide-menu">Dashboard</span>
+						</a>
+					</li>
+				{% endif %}
 
-				<li class="nav-small-cap">
-					<iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
-					<span class="hide-menu">CLIENTS</span>
-				</li>
-				<li class="sidebar-item">
-					<a class="sidebar-link" href="{{ path("app_client_index") }}" aria-expanded="false">
-						<i class="ti ti-truck-delivery nav-small-cap-icon fs-4"></i>
-						<span class="hide-menu">liste clients</span>
-					</a>
-				</li>
-				<li class="nav-small-cap">
-					<iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
-					<span class="hide-menu">STOCK</span>
-				</li>
-				<li class="sidebar-item">
-					<a class="sidebar-link" href="{{ path("app_stock_index") }}" aria-expanded="false">
-						<i class="ti ti-truck-delivery nav-small-cap-icon fs-4"></i>
-						<span class="hide-menu">liste stocks</span>
-					</a>
-				</li>
+				<li><span class="sidebar-divider"></span></li>
 
-				<li class="nav-small-cap">
-					<iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
-					<span class="hide-menu">Ventes</span>
-				</li>
-				<li class="sidebar-item">
-					<a class="sidebar-link" href="{{ path("app_sale_index") }}" aria-expanded="false">
-						<i class="ti ti-truck-delivery nav-small-cap-icon fs-4"></i>
-						<span class="hide-menu">Vendre</span>
-					</a>
-				</li>
-				<li class="sidebar-item">
-					<a class="sidebar-link" href="{{ path("app_sale_list") }}" aria-expanded="false">
-						<i class="ti ti-truck-delivery nav-small-cap-icon fs-4"></i>
-						<span class="hide-menu">Liste</span>
-					</a>
-				</li>
+				<!-- Produits -->
+				{% if is_granted('ROLE_ADMIN') or is_granted('ROLE_PHARMACIST') %}
+					<li class="nav-small-cap">
+						<iconify-icon icon="solar:box-minimalistic-line-duotone" class="nav-small-cap-icon fs-4"></iconify-icon>
+						<span class="hide-menu">Produits</span>
+					</li>
+					<li class="sidebar-item">
+						<a class="sidebar-link" href="{{ path('app_product_index') }}">
+							<iconify-icon icon="solar:box-minimalistic-linear" class="fs-5"></iconify-icon>
+							<span class="hide-menu">Liste Produits</span>
+						</a>
+					</li>
+					<li><span class="sidebar-divider"></span></li>
+				{% endif %}
 
-				<li class="nav-small-cap">
-					<iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
-					<span class="hide-menu">Admin</span>
-				</li>
-				<li class="sidebar-item">
-					<a class="sidebar-link" href="{{ path("app_user_index") }}" aria-expanded="false">
-						<i class="ti ti-truck-delivery nav-small-cap-icon fs-4"></i>
-						<span class="hide-menu">Utilisateur</span>
-					</a>
-				</li>
+				<!-- Catégories -->
+				{% if is_granted('ROLE_ADMIN') %}
+					<li class="nav-small-cap">
+						<iconify-icon icon="solar:layers-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+						<span class="hide-menu">Catégories</span>
+					</li>
+					<li class="sidebar-item">
+						<a class="sidebar-link" href="{{ path('app_category_index') }}">
+							<iconify-icon icon="solar:layers-linear" class="fs-5"></iconify-icon>
+							<span class="hide-menu">Liste Catégories</span>
+						</a>
+					</li>
+					<li><span class="sidebar-divider"></span></li>
 
+					<!-- Fournisseurs -->
+					<li class="nav-small-cap">
+						<iconify-icon icon="solar:truck-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+						<span class="hide-menu">Fournisseurs</span>
+					</li>
+					<li class="sidebar-item">
+						<a class="sidebar-link" href="{{ path('app_supplier_index') }}">
+							<iconify-icon icon="solar:truck-linear" class="fs-5"></iconify-icon>
+							<span class="hide-menu">Liste Fournisseurs</span>
+						</a>
+					</li>
+					<li><span class="sidebar-divider"></span></li>
+
+					<!-- Clients -->
+					<li class="nav-small-cap">
+						<iconify-icon icon="solar:users-group-two-rounded-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+						<span class="hide-menu">Clients</span>
+					</li>
+					<li class="sidebar-item">
+						<a class="sidebar-link" href="{{ path('app_client_index') }}">
+							<iconify-icon icon="solar:user-linear" class="fs-5"></iconify-icon>
+							<span class="hide-menu">Liste Clients</span>
+						</a>
+					</li>
+					<li><span class="sidebar-divider"></span></li>
+				{% endif %}
+
+				<!-- Stock -->
+				{% if is_granted('ROLE_ADMIN') or is_granted('ROLE_PHARMACIST') %}
+					<li class="nav-small-cap">
+						<iconify-icon icon="solar:archive-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+						<span class="hide-menu">Stock</span>
+					</li>
+					<li class="sidebar-item">
+						<a class="sidebar-link" href="{{ path('app_stock_index') }}">
+							<iconify-icon icon="solar:archive-linear" class="fs-5"></iconify-icon>
+							<span class="hide-menu">Liste Stocks</span>
+						</a>
+					</li>
+					<li><span class="sidebar-divider"></span></li>
+				{% endif %}
+
+				<!-- Caisses -->
+				<li class="nav-small-cap">
+					<iconify-icon icon="solar:wallet-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+					<span class="hide-menu">Caisses</span>
+				</li>
+				{% if is_granted('ROLE_ADMIN') or is_granted('ROLE_SELLER') %}
+					<li class="sidebar-item">
+						<a class="sidebar-link" href="{{ path('app_sale_index') }}">
+							<iconify-icon icon="solar:shopping-cart-check-linear" class="fs-5"></iconify-icon>
+							<span class="hide-menu">Vendre</span>
+						</a>
+					</li>
+				{% endif %}
+				{% if is_granted('ROLE_ADMIN') or is_granted('ROLE_PHARMACIST') %}
+					<li class="sidebar-item">
+						<a class="sidebar-link" href="{{ path('app_sale_list') }}">
+							<iconify-icon icon="solar:receipt-list-linear" class="fs-5"></iconify-icon>
+							<span class="hide-menu">Liste Ventes</span>
+						</a>
+					</li>
+				{% endif %}
+
+				<!-- Utilisateurs -->
+				{% if is_granted('ROLE_ADMIN') %}
+					<li class="nav-small-cap">
+						<iconify-icon icon="solar:settings-minimalistic-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+						<span class="hide-menu">Administration</span>
+					</li>
+					<li class="sidebar-item">
+						<a class="sidebar-link" href="{{ path('app_user_index') }}">
+							<iconify-icon icon="solar:user-id-linear" class="fs-5"></iconify-icon>
+							<span class="hide-menu">Utilisateurs</span>
+						</a>
+					</li>
+				{% endif %}
 			</ul>
-
 		</nav>
 		<!-- End Sidebar navigation -->
 	</div>
 	<!-- End Sidebar scroll-->
 </aside>
-<!--  Sidebar End -->
+<!-- Sidebar End -->
